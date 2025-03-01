@@ -1,0 +1,75 @@
+{% extends 'hms/base.html' %}
+{% block content %}
+<div class="max-w-3xl mx-auto mt-8">
+    <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+        <div class="px-6 py-4 bg-gradient-to-r from-blue-500 to-indigo-600">
+            <h2 class="text-3xl font-bold text-white">Patient Dashboard</h2>
+        </div>
+        <div class="p-6">
+            <div class="mb-8">
+                <h3 class="text-2xl font-semibold text-gray-800 mb-4">Your Appointments</h3>
+                <ul class="space-y-4">
+                {% for appointment in appointments %}
+                    <li class="bg-gray-50 rounded-lg p-4 shadow-sm transition duration-300 ease-in-out hover:shadow-md">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <p class="text-lg font-medium text-gray-900">{{ appointment.date_time|date:"F d, Y H:i" }}</p>
+                                <p class="text-gray-600">with Dr. {{ appointment.doctor.user.get_full_name }}</p>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <a href="{% url 'appointment_detail' appointment.pk %}" class="text-sm font-medium text-blue-600 hover:text-blue-800">View Details</a>
+                                <span class="px-2 py-1 text-xs font-semibold rounded-full
+                                    {% if appointment.status == 'P' %}
+                                        bg-yellow-100 text-yellow-800
+                                    {% elif appointment.status == 'A' %}
+                                        bg-green-100 text-green-800
+                                    {% else %}
+                                        bg-red-100 text-red-800
+                                    {% endif %}
+                                ">
+                                    {% if appointment.status == 'P' %}
+                                        Pending
+                                    {% elif appointment.status == 'A' %}
+                                        Approved
+                                    {% else %}
+                                        Declined
+                                    {% endif %}
+                                </span>
+                            </div>
+                        </div>
+                    </li>
+                {% empty %}
+                    <li class="text-center text-gray-500 py-4">No upcoming appointments.</li>
+                {% endfor %}
+                </ul>
+            
+            
+                <div class="mt-6">
+                    <a href="{% url 'create_appointment' %}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-150 ease-in-out">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+                        Schedule New Appointment
+                    </a>
+                </div>
+            </div>
+            <div>
+                <h3 class="text-2xl font-semibold text-gray-800 mb-4">Your Medical Records</h3>
+                <ul class="space-y-4">
+                {% for record in medical_records %}
+                    <li class="bg-gray-50 rounded-lg p-4 shadow-sm transition duration-300 ease-in-out hover:shadow-md">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <p class="text-lg font-medium text-gray-900">{{ record.date|date:"F d, Y" }}</p>
+                                <p class="text-gray-600">{{ record.diagnosis }}</p>
+                            </div>
+                            <a href="{% url 'medical_record_detail' record.pk %}" class="text-sm font-medium text-blue-600 hover:text-blue-800">View Details</a>
+                        </div>
+                    </li>
+                {% empty %}
+                    <li class="text-center text-gray-500 py-4">No medical records found.</li>
+                {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

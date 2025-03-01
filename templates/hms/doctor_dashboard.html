@@ -1,0 +1,72 @@
+{% extends 'hms/base.html' %}
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <h2 class="text-3xl font-bold mb-6 text-gray-800">Doctor Dashboard</h2>
+
+    <div class="bg-white shadow-md rounded-lg p-6 mb-8">
+        <h3 class="text-xl font-semibold mb-4 text-gray-700">Upcoming Appointments</h3>
+        <ul class="space-y-3">
+            {% for appointment in pending_appointments %}
+            <li class="flex items-center justify-between bg-gray-50 p-3 rounded">
+                <span class="text-gray-700">{{ appointment.date_time }} with {{ appointment.patient.user.get_full_name }}</span>
+                <form method="post" action="{% url 'approve_appointment' appointment.id %}" class="flex space-x-2">
+                    {% csrf_token %}
+                    <button type="submit" name="action" value="approve" class="bg-green-500 hover:bg-green-600 text-white py-1 px-3 rounded text-sm">Approve</button>
+                    <button type="submit" name="action" value="decline" class="bg-red-500 hover:bg-red-600 text-white py-1 px-3 rounded text-sm">Decline</button>
+                </form>
+            </li>
+            {% empty %}
+            <li class="text-gray-500 italic">No upcoming appointments</li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <div class="bg-white shadow-md rounded-lg p-6 mb-8">
+        <h3 class="text-xl font-semibold mb-4 text-gray-700">Upcoming Approved Appointments</h3>
+        <ul class="space-y-3">
+            {% for appointment in appointments %}
+            {% if appointment.status == 'A' %}
+            <li class="flex items-center justify-between bg-gray-50 p-3 rounded">
+                <span class="text-gray-700">{{ appointment.date_time }} with {{ appointment.patient.user.get_full_name }}</span>
+                <a href="{% url 'appointment_detail' appointment.pk %}" class="bg-blue-500 hover:bg-blue-600 text-white py-1 px-3 rounded text-sm">View Details</a>
+            </li>
+            {% endif %}
+            {% empty %}
+            <li class="text-gray-500 italic">No upcoming appointments.</li>
+            {% endfor %}
+        </ul>
+    </div>
+
+
+    <div class="bg-white shadow-md rounded-lg p-6 mb-8">
+        <h3 class="text-xl font-semibold mb-4 text-gray-700">Your Patients</h3>
+        <ul class="space-y-3">
+            {% for patient in patients %}
+            <li class="flex items-center justify-between bg-gray-50 p-3 rounded">
+                <span class="text-gray-700">{{ patient.user.get_full_name }}</span>
+                <div class="space-x-2">
+                    <a href="{% url 'patient_medical_history' patient.pk %}" class="bg-green-500 hover:bg-green-600 text-white py-1 px-3 rounded text-sm">View Medical History</a>
+                    <a href="{% url 'add_medical_record' %}?patient={{ patient.pk }}" class="bg-purple-500 hover:bg-purple-600 text-white py-1 px-3 rounded text-sm">Add Medical Record</a>
+                </div>
+            </li>
+            {% empty %}
+            <li class="text-gray-500 italic">No patients found</li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <div class="bg-white shadow-md rounded-lg p-6">
+        <h3 class="text-xl font-semibold mb-4 text-gray-700">Recent Medical Records</h3>
+        <ul class="space-y-3">
+            {% for record in recent_records %}
+            <li class="flex items-center justify-between bg-gray-50 p-3 rounded">
+                <span class="text-gray-700">{{ record.date }} - {{ record.patient.user.get_full_name }}</span>
+                <a href="{% url 'update_medical_record' record.pk %}" class="bg-yellow-500 hover:bg-yellow-600 text-white py-1 px-3 rounded text-sm">Update</a>
+            </li>
+            {% empty %}
+            <li class="text-gray-500 italic">No recent medical records.</li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,7 @@
+{% extends 'hms/base.html' %}
+
+{%  block content %}
+    <h2>Dr. {{  doctor.user.get_full_name }}</h2>
+    <p>Specialty:{{ doctor.specialty|default:"not specified" }}</p>
+    <p>License Number:{{ doctor.license_number }}</p>
+{% endblock %}

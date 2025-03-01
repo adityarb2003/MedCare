@@ -1,0 +1,22 @@
+{% extends 'hms/base.html' %}
+
+{% block content %}
+    <div class="bg-white shadow-md rounded-lg p-6">
+        <h2 class="text-2xl font-bold mb-4 text-gray-800">Medical History for {{ patient.user.get_full_name }}</h2>
+        <ul class="space-y-4 mb-6">
+            {% for record in records %}
+                <li class="bg-gray-50 p-4 rounded-md shadow">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <span class="font-semibold text-gray-700">{{ record.date|date:"F d, Y" }}</span>
+                            <p class="text-gray-600">{{ record.diagnosis }}</p>
+                        </div>
+                        <a href="{% url 'medical_record_detail' record.pk %}" class="text-blue-600 hover:text-blue-800 hover:underline">View Details</a>
+                    </div>
+                </li>
+            {% empty %}
+                <li class="text-gray-500 italic">No medical records found</li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endblock %}

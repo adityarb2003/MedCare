@@ -1,0 +1,90 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}MedCare - Hospital Management System{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen flex flex-col">
+    <header class="bg-white shadow-md" x-data="{ isOpen: false }">
+        <nav class="container mx-auto px-6 py-3">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center">
+                    <a href="{% url 'home' %}" class="text-2xl font-bold text-gray-800">
+                        <span class="text-blue-600">Med</span>Care
+                    </a>
+                </div>
+                <div class="hidden md:flex items-center space-x-4">
+                    <a href="{% url 'home' %}" class="text-gray-700 hover:text-blue-600 transition">Home</a>
+                    <a href="{% url 'doctor_list' %}" class="text-gray-700 hover:text-blue-600 transition">Doctors</a>
+                    {% if user.is_authenticated %}
+                        {% if user.is_staff %}
+                            <a href="{% url 'admin:index' %}" class="text-gray-700 hover:text-blue-600 transition">Admin</a>
+                        {% elif user.patient %}
+                            <a href="{% url 'patient_dashboard' %}" class="text-gray-700 hover:text-blue-600 transition">My Dashboard</a>
+                        {% elif user.doctor %}
+                            <a href="{% url 'doctor_dashboard' %}" class="text-gray-700 hover:text-blue-600 transition">Doctor Portal</a>
+                        {% endif %}
+                        <form action="{% url 'logout' %}" method="post" class="inline">
+                            {% csrf_token %}
+                            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition">Logout</button>
+                        </form>
+                    {% else %}
+                        <a href="{% url 'login' %}" class="text-gray-700 hover:text-blue-600 transition">Login</a>
+                        <a href="{% url 'register_patient' %}" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition">Register</a>
+                    {% endif %}
+                </div>
+                <div class="md:hidden flex items-center">
+                    <button @click="isOpen = !isOpen" class="text-gray-500 hover:text-blue-600 focus:outline-none focus:text-blue-600">
+                        <svg class="h-6 w-6 fill-current" viewBox="0 0 24 24">
+                            <path x-show="!isOpen" fill-rule="evenodd" d="M4 5h16a1 1 0 0 1 0 2H4a1 1 0 1 1 0-2zm0 6h16a1 1 0 0 1 0 2H4a1 1 0 0 1 0-2zm0 6h16a1 1 0 0 1 0 2H4a1 1 0 0 1 0-2z"/>
+                            <path x-show="isOpen" fill-rule="evenodd" d="M18.278 16.864a1 1 0 0 1-1.414 1.414l-4.829-4.828-4.828 4.828a1 1 0 0 1-1.414-1.414l4.828-4.829-4.828-4.828a1 1 0 0 1 1.414-1.414l4.829 4.828 4.828-4.828a1 1 0 1 1 1.414 1.414l-4.828 4.829 4.828 4.828z"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <div x-show="isOpen" class="md:hidden mt-3">
+                <a href="{% url 'home' %}" class="block py-2 text-gray-700 hover:text-blue-600 transition">Home</a>
+                <a href="{% url 'doctor_list' %}" class="block py-2 text-gray-700 hover:text-blue-600 transition">Doctors</a>
+                {% if user.is_authenticated %}
+                    {% if user.is_staff %}
+                        <a href="{% url 'admin:index' %}" class="block py-2 text-gray-700 hover:text-blue-600 transition">Admin</a>
+                    {% elif user.patient %}
+                        <a href="{% url 'patient_dashboard' %}" class="block py-2 text-gray-700 hover:text-blue-600 transition">My Dashboard</a>
+                    {% elif user.doctor %}
+                        <a href="{% url 'doctor_dashboard' %}" class="block py-2 text-gray-700 hover:text-blue-600 transition">Doctor Portal</a>
+                    {% endif %}
+                    <form action="{% url 'logout' %}" method="post" class="block py-2">
+                        {% csrf_token %}
+                        <button type="submit" class="text-gray-700 hover:text-blue-600 transition">Logout</button>
+                    </form>
+                {% else %}
+                    <a href="{% url 'login' %}" class="block py-2 text-gray-700 hover:text-blue-600 transition">Login</a>
+                    <a href="{% url 'register_patient' %}" class="block py-2 text-gray-700 hover:text-blue-600 transition">Register</a>
+                {% endif %}
+            </div>
+        </nav>
+    </header>
+
+    <main class="flex-grow">
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <footer class="bg-gray-800 text-white mt-auto">
+            <div class=" mt-5 pt-5 text-sm text-gray-400 text-center">
+                <p>&copy; 2024 MedCare Hospital Management System. All rights reserved.</p>
+            </div>
+
+    </footer>
+</body>
+</html>
